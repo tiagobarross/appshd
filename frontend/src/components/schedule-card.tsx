@@ -1,7 +1,7 @@
 // ScheduleCard.tsx
 "use client"
 
-import { CalendarCheck2 } from "lucide-react";
+import { CalendarCheck2, Flag } from "lucide-react";
 import { useSchedules } from "@/hooks/useSchedules";
 import { cn } from "@/lib/utils"
 import {
@@ -18,20 +18,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { EmptyCard } from "./emptyCard";
+import { Skeleton } from "./ui/skeleton";
 
 type Props = {
     selectedDate: string;
 };
 
 export function ScheduleCard({ selectedDate }: Props) {
-    const { schedules } = useSchedules()
+    const { schedules, isLoading } = useSchedules()
 
     const formatDate = (dateStr: string) => {
         const [day, month, year] = dateStr.split("/")
         return `${year}-${month}-${day}`
     }
 
-    const filtered = schedules.filter(s => formatDate(s.date) === selectedDate)
+    const filtered = schedules?.filter(s => formatDate(s.date) === selectedDate) || []
 
     return (
         <Card className={cn("")}>
@@ -44,42 +46,46 @@ export function ScheduleCard({ selectedDate }: Props) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Hora</TableHead>
-                            <TableHead>Paciente</TableHead>
-                            <TableHead>Telefone</TableHead>
-                            <TableHead>Convênio</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Procedimento</TableHead>
-                            <TableHead>Profissional</TableHead>
-                            <TableHead>Obs</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filtered.map((s, idx) => (
-                            <TableRow key={idx}>
-                                <TableCell>{s.time}</TableCell>
-                                <TableCell>{s.clientName}</TableCell>
-                                <TableCell>{s.clientPhone}</TableCell>
-                                <TableCell>{s.conventionName}</TableCell>
-                                <TableCell>{s.status}</TableCell>
-                                <TableCell>{s.procedureName}</TableCell>
-                                <TableCell>{s.professionalName}</TableCell>
-                                <TableCell>-</TableCell>
-                            </TableRow>
+                {isLoading ? (
+                    <div className="space-y-2">
+                        {[...Array(4)].map((_, i) => (
+                            <Skeleton key={i} className="h-8 w-full rounded-md" />
                         ))}
-                        {filtered.length === 0 && (
+                    </div>
+                ) : filtered.length === 0 ? (
+                    <EmptyCard />
+                ) : (
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={8}>
-                                    Nenhum agendamento encontrado.
-                                </TableCell>
+                                <TableHead>Hora</TableHead>
+                                <TableHead>Paciente</TableHead>
+                                <TableHead>Telefone</TableHead>
+                                <TableHead>Convênio</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Procedimento</TableHead>
+                                <TableHead>Profissional</TableHead>
+                                <TableHead>Obs</TableHead>
                             </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filtered.map((s, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell>{s.time}</TableCell>
+                                    <TableCell>{s.clientName}</TableCell>
+                                    <TableCell>{s.clientPhone}</TableCell>
+                                    <TableCell>{s.conventionName}</TableCell>
+                                    <TableCell>{s.status}</TableCell>
+                                    <TableCell>{s.procedureName}</TableCell>
+                                    <TableCell>{s.professionalName}</TableCell>
+                                    <TableCell>-</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
             </CardContent>
         </Card>
     )
+
 }

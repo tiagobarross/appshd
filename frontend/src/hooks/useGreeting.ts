@@ -2,7 +2,7 @@ import api from "@/lib/axios"
 import { useEffect, useState } from "react"
 
 export function useGreeting() {
-    const [greeting, setGreeting] = useState("Olá")
+    const [greeting, setGreeting] = useState("")
     const [userName, setUserName] = useState("")
 
     useEffect(() => {

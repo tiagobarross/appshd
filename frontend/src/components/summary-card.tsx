@@ -19,13 +19,15 @@ import {
 } from "@/components/ui/table"
 
 import { useSchedules } from "@/hooks/useSchedules"
+import { EmptyCard } from "./emptyCard"
+import { Skeleton } from "./ui/skeleton"
 
 type Props = {
     selectedDate: string;
 };
 
 export function SummaryCard({ selectedDate }: Props) {
-    const { schedules } = useSchedules()
+    const { schedules, isLoading } = useSchedules()
 
     const formatDate = (dateStr: string) => {
         const [day, month, year] = dateStr.split("/")
@@ -57,24 +59,36 @@ export function SummaryCard({ selectedDate }: Props) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Aguardando</TableHead>
-                            <TableHead>Agendado</TableHead>
-                            <TableHead>Disponível</TableHead>
-                            <TableHead>Total</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>{statusSummary.aguardando}</TableCell>
-                            <TableCell>{statusSummary.agendado}</TableCell>
-                            <TableCell>{statusSummary.disponivel}</TableCell>
-                            <TableCell>{statusSummary.total}</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
+                {isLoading ? (
+                    <div className="space-y-2">
+                        {[...Array(2)].map((_, i) => (
+                            <Skeleton key={i} className="h-8 w-full rounded-md" />
+                        ))}
+                    </div>
+                ) :
+
+                    filtered.length === 0 ? (
+                        <EmptyCard />
+                    ) : (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Aguardando</TableHead>
+                                    <TableHead>Agendado</TableHead>
+                                    <TableHead>Disponível</TableHead>
+                                    <TableHead>Total</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>{statusSummary.aguardando}</TableCell>
+                                    <TableCell>{statusSummary.agendado}</TableCell>
+                                    <TableCell>{statusSummary.disponivel}</TableCell>
+                                    <TableCell>{statusSummary.total}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    )}
             </CardContent>
         </Card>
     )
