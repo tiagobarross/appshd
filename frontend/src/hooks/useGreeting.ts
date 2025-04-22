@@ -7,9 +7,9 @@ export function useGreeting() {
 
     useEffect(() => {
         const hour = new Date().getHours()
-        if (hour < 12) setGreeting("Bom dia")
-        else if (hour < 18) setGreeting("Boa tarde")
-        else setGreeting("Boa noite")
+        if (hour < 12) setGreeting("Bom dia,")
+        else if (hour < 18) setGreeting("Boa tarde,")
+        else setGreeting("Boa noite,")
     }, [])
 
     useEffect(() => {
